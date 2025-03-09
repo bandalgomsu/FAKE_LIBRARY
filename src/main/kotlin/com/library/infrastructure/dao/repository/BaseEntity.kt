@@ -1,4 +1,4 @@
-package com.ruuniv.infrastricture.dao.repository
+package com.library.infrastructure.dao.repository
 
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
