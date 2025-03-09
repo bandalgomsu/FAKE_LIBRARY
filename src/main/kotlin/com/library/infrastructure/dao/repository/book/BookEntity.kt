@@ -10,7 +10,7 @@ class BookEntity(
     @Id
     var id: Long? = null,
     @Column("plot")
-    var plot: String = "",
+    var plot: String,
     @Column("title")
     var title: String,
     @Column("user_id")

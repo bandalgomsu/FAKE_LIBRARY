@@ -1,7 +1,8 @@
 package com.library.infrastructure.dao.repository.book.genre
 
-import com.library.app.book.model.BookGenre
+import kotlinx.coroutines.flow.Flow
 import org.springframework.data.repository.kotlin.CoroutineCrudRepository
 
-interface BookGenreCoroutineRepository : CoroutineCrudRepository<BookGenre, Long> {
+interface BookGenreCoroutineRepository : CoroutineCrudRepository<BookGenreEntity, Long> {
+    suspend fun findAllByBookId(bookId: Long): Flow<BookGenreEntity>
 }

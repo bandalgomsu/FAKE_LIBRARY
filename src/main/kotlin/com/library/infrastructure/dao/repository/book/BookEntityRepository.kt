@@ -2,7 +2,9 @@ package com.library.infrastructure.dao.repository.book
 
 import com.library.app.book.dao.BookDao
 import com.library.app.book.model.Book
+import org.springframework.stereotype.Repository
 
+@Repository
 class BookEntityRepository(
     private val bookRepository: BookCoroutineRepository
 ) : BookDao {
@@ -29,7 +31,9 @@ class BookEntityRepository(
                 id = it.id,
                 plot = it.plot,
                 title = it.title,
-                userId = it.userId
+                userId = it.userId,
+                createdAt = it.createdAt,
+                updatedAt = it.updatedAt
             )
         }
     }

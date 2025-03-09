@@ -4,7 +4,7 @@ import java.time.LocalDateTime
 
 class Book(
     val id: Long? = null,
-    val plot: String = "",
+    val plot: String,
     val title: String,
     val userId: Long? = null,
     val createdAt: LocalDateTime? = null,
