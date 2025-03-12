@@ -12,6 +12,7 @@ class BookResponse {
         val bookId: Long,
         val title: String,
         val plot: String,
+        val genres: List<String>,
         val createdAt: LocalDateTime? = null,
         val updatedAt: LocalDateTime? = null
     )

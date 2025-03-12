@@ -7,6 +7,7 @@ class Book(
     val id: Long? = null,
     val plot: String,
     val title: String,
+    val genres: List<String> = listOf(),
     val userId: Long? = null,
     val createdAt: LocalDateTime? = null,
     val updatedAt: LocalDateTime? = null,
@@ -16,6 +17,7 @@ class Book(
             bookId = id!!,
             title = title,
             plot = plot,
+            genres = genres,
             createdAt = createdAt,
             updatedAt = updatedAt
         )
