@@ -10,7 +10,7 @@ class BookPageFinder(
     private val bookPageDao: BookPageDao
 ) {
 
-    suspend fun findPageBookPage(bookId: Long, page: Int, size: Int): PageResponse<BookPage> {
+    suspend fun findPageBookPage(bookId: Long, size: Int, page: Int): PageResponse<BookPage> {
         return bookPageDao.findPageByBookId(bookId, page, size)
     }
 }

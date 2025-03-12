@@ -19,5 +19,5 @@ interface BookPageCoroutineRepository : CoroutineCrudRepository<BookPageEntity, 
         LIMIT :size OFFSET :offset
     """
     )
-    suspend fun findPageByBookId(bookId: Long, size: Int, offSet: Int): Flow<BookPageEntity>
+    suspend fun findPageByBookId(bookId: Long, size: Int, offset: Int): Flow<BookPageEntity>
 }

@@ -25,7 +25,7 @@ class BookPageRepository(
             }.toList()
     }
 
-    override suspend fun findPageByBookId(bookId: Long, page: Int, size: Int): PageResponse<BookPage> {
+    override suspend fun findPageByBookId(bookId: Long, size: Int, page: Int): PageResponse<BookPage> {
         val offset = (page - 1) * size
         val totalElements = bookPageRepository.countByBookId(bookId)
         val bookPages = bookPageRepository.findPageByBookId(bookId, size, offset)
