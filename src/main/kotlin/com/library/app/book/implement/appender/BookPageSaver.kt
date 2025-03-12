@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 
 @Component
-class BookPageAppender(
+class BookPageSaver(
     private val bookPageDao: BookPageDao
 ) {
     @Transactional

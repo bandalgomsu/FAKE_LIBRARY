@@ -1,14 +1,14 @@
-package com.library.app.book.implement.reader
+package com.library.app.book.implement.getter
 
 import com.library.app.book.dao.BookPageDao
 import com.library.app.book.model.BookPage
 import org.springframework.stereotype.Component
 
 @Component
-class BookPageReader(
+class BookPageGetter(
     private val bookPageDao: BookPageDao
 ) {
-    suspend fun getByBookId(bookId: Long): List<BookPage> {
+    suspend fun getAllByBookId(bookId: Long): List<BookPage> {
         return bookPageDao.getAllByBookId(bookId)
     }
 }
