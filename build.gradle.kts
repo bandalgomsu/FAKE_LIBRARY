@@ -37,6 +37,9 @@ dependencies {
     //Redis
     implementation("org.springframework.boot:spring-boot-starter-data-redis-reactive")
 
+    //Caffeine
+    implementation("com.github.ben-manes.caffeine:caffeine:3.2.0")
+
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("io.projectreactor:reactor-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")

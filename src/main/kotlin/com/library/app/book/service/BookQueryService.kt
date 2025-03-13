@@ -8,6 +8,8 @@ import com.library.app.book.implement.getter.BookGetter
 import com.library.app.book.implement.getter.BookPageGetter
 import com.library.app.common.PageResponse
 import kotlinx.coroutines.coroutineScope
+import org.springframework.cache.annotation.Cacheable
+import org.springframework.cache.annotation.Caching
 import org.springframework.stereotype.Service
 
 @Service
@@ -47,6 +49,11 @@ class BookQueryService(
         )
     }
 
+    @Caching(
+        cacheable = [
+            Cacheable(cacheManager = "caffeineCacheManager", value = ["NEW_BOOK"]),
+        ]
+    )
     suspend fun findPageNewBook(size: Int = 1, page: Int = 1): PageResponse<BookResponse.BookInfo> = coroutineScope {
         val bookPage = bookFinder.findPage(size, page)
 
