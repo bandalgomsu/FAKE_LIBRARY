@@ -1,7 +1,6 @@
 package com.library.app.common.cache
 
-import java.time.LocalDateTime
-import java.time.ZoneOffset
+import com.library.app.common.util.TimeUtil
 
 enum class CacheType(
     val cacheName: String,
@@ -11,12 +10,8 @@ enum class CacheType(
 ) {
     NEW_BOOK(
         "NEW_BOOK",
-        LocalDateTime.now().toLocalDate().plusDays(1).atStartOfDay().toEpochSecond(ZoneOffset.UTC)
-                - LocalDateTime.now()
-            .toEpochSecond(ZoneOffset.UTC),
-        LocalDateTime.now().toLocalDate().plusDays(1).atStartOfDay().toEpochSecond(ZoneOffset.UTC)
-                - LocalDateTime.now()
-            .toEpochSecond(ZoneOffset.UTC),
+        TimeUtil.getRemainingSecondsToday(),
+        TimeUtil.getRemainingSecondsToday(),
         10000
     ),
 }

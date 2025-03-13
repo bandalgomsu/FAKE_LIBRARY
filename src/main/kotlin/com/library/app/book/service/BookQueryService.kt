@@ -7,6 +7,7 @@ import com.library.app.book.implement.getter.BookGenreGetter
 import com.library.app.book.implement.getter.BookGetter
 import com.library.app.book.implement.getter.BookPageGetter
 import com.library.app.common.PageResponse
+import com.library.app.common.cache.CacheType
 import com.library.app.common.cache.TwoLevelCacheManager
 import kotlinx.coroutines.coroutineScope
 import org.springframework.stereotype.Service
@@ -52,7 +53,10 @@ class BookQueryService(
 
     suspend fun findPageNewBook(size: Int = 1, page: Int = 1): BookResponse.BookInfoPagination =
         twoLevelCacheManager.getOrLoad(
-            "NEW_BOOK", "$page$size", BookResponse.BookInfoPagination::class.java
+            CacheType.NEW_BOOK.cacheName,
+            "$page$size",
+            BookResponse.BookInfoPagination::class.java,
+            CacheType.NEW_BOOK.redisExpireSeconds
         ) {
             val bookPage = bookFinder.findPage(size, page)
 

@@ -70,7 +70,6 @@ class RedisConfig {
         return ReactiveRedisTemplate(redisConnectionFactory(), context)
     }
 
-
     @Bean
     fun reactiveRedisStringTemplate(): ReactiveRedisTemplate<String, String> {
         val factory = redisConnectionFactory()
@@ -87,5 +86,5 @@ class RedisConfig {
 
         return ReactiveRedisTemplate(factory, context)
     }
-
+    
 }
