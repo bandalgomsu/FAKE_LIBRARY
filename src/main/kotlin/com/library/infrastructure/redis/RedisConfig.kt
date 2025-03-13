@@ -1,5 +1,9 @@
 package com.library.infrastructure.redis
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.lettuce.core.resource.ClientResources
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
@@ -39,15 +43,33 @@ class RedisConfig {
 
     @Bean
     fun reactiveRedisAnyTemplate(): ReactiveRedisTemplate<String, Any> {
-        val factory = redisConnectionFactory()
-        val serializer = Jackson2JsonRedisSerializer(Any::class.java)
+        val objectMapper = jacksonObjectMapper().apply {
+            registerModule(com.fasterxml.jackson.module.kotlin.KotlinModule.Builder().build())
+
+            // ✅ JSON 직렬화 시 @class 필드를 포함하여 타입 정보를 유지하도록 설정
+            activateDefaultTyping(
+                BasicPolymorphicTypeValidator.builder()
+                    .allowIfBaseType(Any::class.java)
+                    .build(),
+                ObjectMapper.DefaultTyping.NON_FINAL,
+                JsonTypeInfo.As.PROPERTY
+            )
+        }
+
+        val serializer = Jackson2JsonRedisSerializer(objectMapper, Any::class.java)
+
         val builder = RedisSerializationContext
             .newSerializationContext<String, Any>(StringRedisSerializer())
-        val context = builder.value(serializer).hashValue(serializer)
-            .hashKey(serializer).build()
 
-        return ReactiveRedisTemplate(factory, context)
+        val context = builder
+            .value(serializer) // ✅ 제네릭 타입 유지 가능
+            .hashValue(serializer)
+            .hashKey(serializer)
+            .build()
+
+        return ReactiveRedisTemplate(redisConnectionFactory(), context)
     }
+
 
     @Bean
     fun reactiveRedisStringTemplate(): ReactiveRedisTemplate<String, String> {

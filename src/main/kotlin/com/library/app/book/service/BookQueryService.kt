@@ -7,9 +7,8 @@ import com.library.app.book.implement.getter.BookGenreGetter
 import com.library.app.book.implement.getter.BookGetter
 import com.library.app.book.implement.getter.BookPageGetter
 import com.library.app.common.PageResponse
+import com.library.app.common.cache.TwoLevelCacheManager
 import kotlinx.coroutines.coroutineScope
-import org.springframework.cache.annotation.Cacheable
-import org.springframework.cache.annotation.Caching
 import org.springframework.stereotype.Service
 
 @Service
@@ -20,6 +19,8 @@ class BookQueryService(
     private val bookGetter: BookGetter,
     private val bookPageGetter: BookPageGetter,
     private val bookGenreGetter: BookGenreGetter,
+
+    private val twoLevelCacheManager: TwoLevelCacheManager
 ) {
 
     suspend fun findPageBook(size: Int = 1, page: Int = 1): PageResponse<BookResponse.BookInfo> = coroutineScope {
@@ -49,37 +50,36 @@ class BookQueryService(
         )
     }
 
-    @Caching(
-        cacheable = [
-            Cacheable(cacheManager = "redisCacheManager", cacheNames = ["NEW_BOOK"]),
-        ]
-    )
-    suspend fun findPageNewBook(size: Int = 1, page: Int = 1): PageResponse<BookResponse.BookInfo> = coroutineScope {
-        val bookPage = bookFinder.findPage(size, page)
+    suspend fun findPageNewBook(size: Int = 1, page: Int = 1): BookResponse.BookInfoPagination =
+        twoLevelCacheManager.getOrLoad(
+            "NEW_BOOK", "$page$size", BookResponse.BookInfoPagination::class.java
+        ) {
+            val bookPage = bookFinder.findPage(size, page)
 
-        val books = bookPage.result.map {
-            bookGenreGetter.getAllByBookId(bookId = it.id!!).map {
-                it.genre
+            val books = bookPage.result.map {
+                bookGenreGetter.getAllByBookId(bookId = it.id!!).map {
+                    it.genre
+                }.toList()
+
+                BookResponse.BookInfo(
+                    bookId = it.id,
+                    title = it.title,
+                    plot = it.plot,
+                    genres = it.genres,
+                    createdAt = it.createdAt,
+                    updatedAt = it.updatedAt
+                )
             }.toList()
 
-            BookResponse.BookInfo(
-                bookId = it.id,
-                title = it.title,
-                plot = it.plot,
-                genres = it.genres,
-                createdAt = it.createdAt,
-                updatedAt = it.updatedAt
+            return@getOrLoad BookResponse.BookInfoPagination(
+                bookInfos = books,
+                totalPages = bookPage.totalPages,
+                totalElements = bookPage.totalElements,
+                currentPage = bookPage.currentPage,
+                pageSize = bookPage.pageSize
             )
-        }.toList()
+        }
 
-        return@coroutineScope PageResponse(
-            result = books,
-            totalPages = bookPage.totalPages,
-            totalElements = bookPage.totalElements,
-            currentPage = bookPage.currentPage,
-            pageSize = bookPage.pageSize
-        )
-    }
 
     suspend fun findPageBookPageByBookId(
         bookId: Long,
