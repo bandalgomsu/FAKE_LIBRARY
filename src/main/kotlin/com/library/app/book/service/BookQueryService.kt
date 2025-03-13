@@ -51,14 +51,14 @@ class BookQueryService(
 
     @Caching(
         cacheable = [
-            Cacheable(cacheManager = "caffeineCacheManager", value = ["NEW_BOOK"]),
+            Cacheable(cacheManager = "redisCacheManager", cacheNames = ["NEW_BOOK"]),
         ]
     )
     suspend fun findPageNewBook(size: Int = 1, page: Int = 1): PageResponse<BookResponse.BookInfo> = coroutineScope {
         val bookPage = bookFinder.findPage(size, page)
 
         val books = bookPage.result.map {
-            val genres = bookGenreGetter.getAllByBookId(bookId = it.id!!).map {
+            bookGenreGetter.getAllByBookId(bookId = it.id!!).map {
                 it.genre
             }.toList()
 

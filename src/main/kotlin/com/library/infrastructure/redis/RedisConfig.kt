@@ -1,8 +1,5 @@
 package com.library.infrastructure.redis
 
-import io.lettuce.core.event.EventBus
-import io.lettuce.core.event.connection.ConnectedEvent
-import io.lettuce.core.event.connection.DisconnectedEvent
 import io.lettuce.core.resource.ClientResources
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
@@ -69,20 +66,4 @@ class RedisConfig {
         return ReactiveRedisTemplate(factory, context)
     }
 
-    private fun monitorRedisEvents(factory: LettuceConnectionFactory) {
-        val eventBus: EventBus = factory.clientResources!!.eventBus()
-        eventBus
-            .get()
-            .subscribe {
-                when (it) {
-                    is ConnectedEvent -> {
-                        println("a")
-                    }
-
-                    is DisconnectedEvent -> {
-                        println("a")
-                    }
-                }
-            }
-    }
 }
