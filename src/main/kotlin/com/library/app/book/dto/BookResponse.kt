@@ -1,5 +1,7 @@
 package com.library.app.book.dto
 
+import com.fasterxml.jackson.annotation.JsonProperty
+import java.io.Serializable
 import java.time.LocalDateTime
 
 class BookResponse {
@@ -9,13 +11,13 @@ class BookResponse {
     )
 
     data class BookInfo(
-        val bookId: Long,
-        val title: String,
-        val plot: String,
-        val genres: List<String>,
-        val createdAt: LocalDateTime? = null,
-        val updatedAt: LocalDateTime? = null
-    )
+        @JsonProperty("bookId") val bookId: Long,
+        @JsonProperty("title") val title: String,
+        @JsonProperty("plot") val plot: String,
+        @JsonProperty("genres") val genres: List<String>,
+        @JsonProperty("createdAt") val createdAt: LocalDateTime? = null,
+        @JsonProperty("updatedAt") val updatedAt: LocalDateTime? = null
+    ) : Serializable
 
     data class BookGenreInfo(
         val bookGenreId: Long,
@@ -30,4 +32,13 @@ class BookResponse {
         val createdAt: LocalDateTime? = null,
         val updatedAt: LocalDateTime? = null,
     )
+
+    class BookInfoPagination(
+        @JsonProperty("bookInfos") val bookInfos: List<BookInfo>,
+        @JsonProperty("totalPages") val totalPages: Long,
+        @JsonProperty("totalElements") val totalElements: Long,
+        @JsonProperty("currentPage") val currentPage: Int,
+        @JsonProperty("pageSize") val pageSize: Int,
+    ) : Serializable {
+    }
 }

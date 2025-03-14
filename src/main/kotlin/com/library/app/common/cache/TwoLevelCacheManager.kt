@@ -1,0 +1,61 @@
+package com.library.app.common.cache
+
+import com.library.app.common.redis.RedisClient
+import com.library.app.common.redis.RedisConnectContext
+import com.library.app.common.redis.RedisTopic
+import org.springframework.cache.caffeine.CaffeineCacheManager
+import org.springframework.stereotype.Component
+
+
+@Component
+class TwoLevelCacheManager(
+    private val caffeineCacheManager: CaffeineCacheManager,
+    private val redisClient: RedisClient,
+    private val redisConnectContext: RedisConnectContext,
+) {
+
+    suspend fun <T : Any> getOrPut(
+        cacheName: String,
+        key: String,
+        type: Class<T>,
+        redisExpireSeconds: Long = 60 * 60,
+        loader: suspend () -> T
+    ): T {
+        if (redisConnectContext.isConnect) {
+            val localCache = caffeineCacheManager.getCache(cacheName)
+
+            localCache?.get(key)?.let {
+                return it.get() as T
+            }
+
+            val redisValue = redisClient.getData("$cacheName:$key", type)
+            if (redisValue != null) {
+                localCache?.put(key, redisValue) // 로컬 캐시에 저장
+                return redisValue
+            }
+            val value = loader()
+            localCache?.put(key, value)
+            redisClient.setData("$cacheName:$key", value, redisExpireSeconds)
+
+            return value
+        }
+
+        return loader()
+    }
+
+    suspend fun <T : Any> evict(
+        cacheName: String,
+        key: String,
+        type: Class<T>,
+        redisExpireSeconds: Long = 60 * 60,
+        loader: suspend () -> T
+    ): T {
+        if (redisConnectContext.isConnect) {
+            redisClient.deleteData(key)
+
+            redisClient.publish(RedisTopic.CACHE_EVICT, "$cacheName-$key")
+        }
+
+        return loader()
+    }
+}

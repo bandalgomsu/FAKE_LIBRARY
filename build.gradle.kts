@@ -36,6 +36,10 @@ dependencies {
 
     //Redis
     implementation("org.springframework.boot:spring-boot-starter-data-redis-reactive")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
+
+    //Caffeine
+    implementation("com.github.ben-manes.caffeine:caffeine:3.2.0")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("io.projectreactor:reactor-test")

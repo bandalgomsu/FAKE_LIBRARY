@@ -26,7 +26,7 @@ class BookQueryController(
     suspend fun findPageNewBook(
         @RequestParam size: Int = 1,
         @RequestParam page: Int = 1,
-    ): ResponseEntity<PageResponse<BookResponse.BookInfo>> {
+    ): ResponseEntity<BookResponse.BookInfoPagination> {
         val response = bookQueryService.findPageNewBook(size, page)
 
         return ResponseEntity.ok(response)

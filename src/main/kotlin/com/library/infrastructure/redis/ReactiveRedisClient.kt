@@ -2,6 +2,7 @@ package com.library.infrastructure.redis
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.library.app.common.redis.RedisClient
+import com.library.app.common.redis.RedisTopic
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.reactor.awaitSingle
 import kotlinx.coroutines.reactor.awaitSingleOrNull
@@ -14,6 +15,7 @@ import kotlin.reflect.KClass
 @Component
 class ReactiveRedisClient(
     @Qualifier("reactiveRedisStringTemplate") private val redisTemplate: ReactiveRedisTemplate<String, String>,
+    @Qualifier("reactiveRedisAnyTemplate") private val redisAnyTemplate: ReactiveRedisTemplate<String, Any>,
     private val objectMapper: ObjectMapper,
 ) : RedisClient {
     override suspend fun <T> setData(key: String, data: T): Boolean = coroutineScope {
@@ -37,9 +39,29 @@ class ReactiveRedisClient(
             }
     }
 
+    override suspend fun <T : Any> getData(key: String, type: Class<T>): T? = coroutineScope {
+        redisTemplate.opsForValue()
+            .get(key)
+            .awaitSingleOrNull()
+            ?.let {
+                objectMapper.readValue(it, type)
+            }
+    }
+
     override suspend fun deleteData(key: String): Boolean = coroutineScope {
         redisTemplate.opsForValue()
             .delete(key)
+            .awaitSingle()
+    }
+
+    override suspend fun getData(key: String): Any? = coroutineScope {
+        redisAnyTemplate.opsForValue()
+            .get(key)
+            .awaitSingleOrNull()
+    }
+
+    override suspend fun publish(topic: RedisTopic, message: String): Unit = coroutineScope {
+        redisTemplate.convertAndSend(topic.name, message)
             .awaitSingle()
     }
 }
