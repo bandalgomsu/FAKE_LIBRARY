@@ -2,6 +2,7 @@ package com.library.infrastructure.redis
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.library.app.common.redis.RedisClient
+import com.library.app.common.redis.RedisTopic
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.reactor.awaitSingle
 import kotlinx.coroutines.reactor.awaitSingleOrNull
@@ -57,5 +58,10 @@ class ReactiveRedisClient(
         redisAnyTemplate.opsForValue()
             .get(key)
             .awaitSingleOrNull()
+    }
+
+    override suspend fun publish(topic: RedisTopic, message: String): Unit = coroutineScope {
+        redisTemplate.convertAndSend(topic.name, message)
+            .awaitSingle()
     }
 }

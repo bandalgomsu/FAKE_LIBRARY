@@ -1,6 +1,7 @@
 package com.library.app.common.cache
 
 import com.library.app.common.redis.RedisClient
+import com.library.app.common.redis.RedisTopic
 import org.springframework.cache.caffeine.CaffeineCacheManager
 import org.springframework.stereotype.Component
 
@@ -11,7 +12,7 @@ class TwoLevelCacheManager(
     private val redisClient: RedisClient
 ) {
 
-    suspend fun <T : Any> getOrLoad(
+    suspend fun <T : Any> getOrPut(
         cacheName: String,
         key: String,
         type: Class<T>,
@@ -33,7 +34,7 @@ class TwoLevelCacheManager(
         val value = loader()
         localCache?.put(key, value)
         redisClient.setData("$cacheName:$key", value, redisExpireSeconds)
-
+        
         return value
     }
 
@@ -44,11 +45,10 @@ class TwoLevelCacheManager(
         redisExpireSeconds: Long = 60 * 60,
         loader: suspend () -> T
     ): T {
-        val localCache = caffeineCacheManager.getCache(cacheName)
-        localCache?.evict(key)
+        redisClient.deleteData(key)
 
-        redisClient.deleteData("$cacheName:$key")
-        
+        redisClient.publish(RedisTopic.CACHE_EVICT, "$cacheName-$key")
+
         return loader()
     }
 }

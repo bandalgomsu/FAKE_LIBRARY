@@ -52,7 +52,7 @@ class BookQueryService(
     }
 
     suspend fun findPageNewBook(size: Int = 1, page: Int = 1): BookResponse.BookInfoPagination =
-        twoLevelCacheManager.getOrLoad(
+        twoLevelCacheManager.getOrPut(
             CacheType.NEW_BOOK.cacheName,
             "$page$size",
             BookResponse.BookInfoPagination::class.java,
@@ -75,7 +75,7 @@ class BookQueryService(
                 )
             }.toList()
 
-            return@getOrLoad BookResponse.BookInfoPagination(
+            return@getOrPut BookResponse.BookInfoPagination(
                 bookInfos = books,
                 totalPages = bookPage.totalPages,
                 totalElements = bookPage.totalElements,

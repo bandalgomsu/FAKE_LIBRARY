@@ -86,5 +86,4 @@ class RedisConfig {
 
         return ReactiveRedisTemplate(factory, context)
     }
-    
 }
