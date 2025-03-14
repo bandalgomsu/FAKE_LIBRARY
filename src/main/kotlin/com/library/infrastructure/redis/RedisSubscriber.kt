@@ -1,6 +1,5 @@
 package com.library.infrastructure.redis
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.library.app.common.redis.RedisTopic
 import jakarta.annotation.PostConstruct
 import kotlinx.coroutines.CoroutineScope
@@ -16,9 +15,7 @@ import org.springframework.stereotype.Component
 @Component
 class RedisSubscriber(
     private val connectionFactory: ReactiveRedisConnectionFactory,
-
     private val caffeineCacheManager: CaffeineCacheManager,
-    private val objectMapper: ObjectMapper
 ) {
 
     @PostConstruct
@@ -41,6 +38,8 @@ class RedisSubscriber(
                     val (cacheName, cacheKey) = it.message.split("-")
 
                     caffeineCacheManager.getCache(cacheName)?.evict(cacheKey)
+                } else if (it.channel == RedisTopic.LOCAL_CACHE_ALL_CLEAR.name) {
+                    caffeineCacheManager.cacheNames.forEach { caffeineCacheManager.getCache(it)?.clear() }
                 }
             }
     }
