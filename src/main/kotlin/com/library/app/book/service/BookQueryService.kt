@@ -1,11 +1,11 @@
 package com.library.app.book.service
 
 import com.library.app.book.dto.BookResponse
+import com.library.app.book.implement.finder.BookContentFinder
 import com.library.app.book.implement.finder.BookFinder
-import com.library.app.book.implement.finder.BookPageFinder
+import com.library.app.book.implement.getter.BookContentGetter
 import com.library.app.book.implement.getter.BookGenreGetter
 import com.library.app.book.implement.getter.BookGetter
-import com.library.app.book.implement.getter.BookPageGetter
 import com.library.app.common.PageResponse
 import com.library.app.common.cache.CacheType
 import com.library.app.common.cache.TwoLevelCacheManager
@@ -15,10 +15,10 @@ import org.springframework.stereotype.Service
 @Service
 class BookQueryService(
     private val bookFinder: BookFinder,
-    private val bookPageFinder: BookPageFinder,
+    private val bookContentFinder: BookContentFinder,
 
     private val bookGetter: BookGetter,
-    private val bookPageGetter: BookPageGetter,
+    private val bookContentGetter: BookContentGetter,
     private val bookGenreGetter: BookGenreGetter,
 
     private val twoLevelCacheManager: TwoLevelCacheManager
@@ -89,19 +89,19 @@ class BookQueryService(
         bookId: Long,
         size: Int = 1,
         page: Int = 1
-    ): PageResponse<BookResponse.BookPageInfo> {
-        val bookPagePage = bookPageFinder.findPageBookPage(bookId, size, page)
+    ): PageResponse<BookResponse.BookContentInfo> {
+        val bookPagePage = bookContentFinder.findPageBookPage(bookId, size, page)
 
-        val bookPages = bookPagePage.result.map {
-            BookResponse.BookPageInfo(
+        val bookContents = bookPagePage.result.map {
+            BookResponse.BookContentInfo(
                 bookPageId = it.id!!,
-                contents = it.contents,
+                content = it.content,
                 createdAt = it.createdAt,
                 updatedAt = it.updatedAt
             )
         }
         return PageResponse(
-            result = bookPages,
+            result = bookContents,
             totalPages = bookPagePage.totalPages,
             totalElements = bookPagePage.totalElements,
             currentPage = bookPagePage.currentPage,

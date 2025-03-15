@@ -1,7 +1,7 @@
 package com.library.app.book.service
 
+import com.library.app.book.implement.saver.BookContentSaver
 import com.library.app.book.implement.saver.BookGenreSaver
-import com.library.app.book.implement.saver.BookPageSaver
 import com.library.app.book.implement.saver.BookSaver
 import com.library.app.common.llm.LLMClient
 import kotlinx.coroutines.async
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service
 class BookScheduleService(
     private val bookSaver: BookSaver,
     private val bookGenreSaver: BookGenreSaver,
-    private val bookPageSaver: BookPageSaver,
+    private val bookContentSaver: BookContentSaver,
 
     private val llmClient: LLMClient,
 ) {
@@ -31,7 +31,7 @@ class BookScheduleService(
                 val savedBook = bookSaver.save(bookInfo.plot, bookInfo.title)
 
                 coroutineScope {
-                    val page = async { bookPageSaver.save(bookInfo.contents, savedBook.id!!) }
+                    val content = async { bookContentSaver.save(bookInfo.content, savedBook.id!!) }
 
                     val genres = async {
                         bookInfo.genres.forEach {
@@ -39,7 +39,7 @@ class BookScheduleService(
                         }
                     }
 
-                    awaitAll(page, genres)
+                    awaitAll(content, genres)
                 }
 
                 logger.info("BOOK CREATE SUCCESS, i = {}", it)

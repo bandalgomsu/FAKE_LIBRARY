@@ -26,9 +26,9 @@ class BookResponse {
         val updatedAt: LocalDateTime? = null,
     )
 
-    data class BookPageInfo(
+    data class BookContentInfo(
         val bookPageId: Long,
-        val contents: String,
+        val content: String,
         val createdAt: LocalDateTime? = null,
         val updatedAt: LocalDateTime? = null,
     )

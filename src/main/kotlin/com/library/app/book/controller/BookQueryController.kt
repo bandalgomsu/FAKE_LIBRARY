@@ -37,7 +37,7 @@ class BookQueryController(
         @PathVariable bookId: Long,
         @RequestParam size: Int = 1,
         @RequestParam page: Int = 1,
-    ): ResponseEntity<PageResponse<BookResponse.BookPageInfo>> {
+    ): ResponseEntity<PageResponse<BookResponse.BookContentInfo>> {
         val response = bookQueryService.findPageBookPageByBookId(bookId, size, page)
 
         return ResponseEntity.ok(response)
