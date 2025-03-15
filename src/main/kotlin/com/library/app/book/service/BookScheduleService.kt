@@ -22,7 +22,7 @@ class BookScheduleService(
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    @Scheduled(cron = "0 33 20 * * ?")
+    @Scheduled(cron = "0 0 2 * * ?")
     suspend fun startCreateBookSchedule() {
         repeat(15 * 100) {
             try {
