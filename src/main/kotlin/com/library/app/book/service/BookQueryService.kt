@@ -7,7 +7,6 @@ import com.library.app.book.implement.finder.BookFinder
 import com.library.app.book.implement.getter.BookContentGetter
 import com.library.app.book.implement.getter.BookGenreGetter
 import com.library.app.book.implement.getter.BookGetter
-import com.library.app.common.PageResponse
 import com.library.app.common.cache.CacheType
 import com.library.app.common.cache.TwoLevelCacheManager
 import kotlinx.coroutines.coroutineScope
@@ -25,10 +24,10 @@ class BookQueryService(
     private val twoLevelCacheManager: TwoLevelCacheManager
 ) {
 
-    suspend fun findPageBook(size: Int = 1, page: Int = 1): PageResponse<BookResponse.BookInfo> = coroutineScope {
-        val bookPages = bookFinder.findPage(size, page)
+    suspend fun findPageBook(size: Int = 10, page: Int = 1): BookPageResponse.BookInfoPagination = coroutineScope {
+        val bookPage = bookFinder.findPage(size, page)
 
-        val books = bookPages.result.map {
+        val books = bookPage.result.map {
             val genres = bookGenreGetter.getAllByBookId(bookId = it.id!!).map {
                 it.genre
             }.toList()
@@ -43,12 +42,12 @@ class BookQueryService(
             )
         }.toList()
 
-        return@coroutineScope PageResponse(
-            result = books,
-            totalPages = bookPages.totalPages,
-            totalElements = bookPages.totalElements,
-            currentPage = bookPages.currentPage,
-            pageSize = bookPages.pageSize
+        return@coroutineScope BookPageResponse.BookInfoPagination(
+            bookInfos = books,
+            totalPages = bookPage.totalPages,
+            totalElements = bookPage.totalElements,
+            currentPage = bookPage.currentPage,
+            pageSize = bookPage.pageSize
         )
     }
 

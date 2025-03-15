@@ -1,9 +1,7 @@
 package com.library.app.book.controller
 
 import com.library.app.book.dto.BookPageResponse
-import com.library.app.book.dto.BookResponse
 import com.library.app.book.service.BookQueryService
-import com.library.app.common.PageResponse
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
@@ -15,9 +13,9 @@ class BookQueryController(
 
     @GetMapping("")
     suspend fun findPageBook(
-        @RequestParam size: Int = 1,
+        @RequestParam size: Int = 10,
         @RequestParam page: Int = 1,
-    ): ResponseEntity<PageResponse<BookResponse.BookInfo>> {
+    ): ResponseEntity<BookPageResponse.BookInfoPagination> {
         val response = bookQueryService.findPageBook(size, page)
 
         return ResponseEntity.ok(response)
