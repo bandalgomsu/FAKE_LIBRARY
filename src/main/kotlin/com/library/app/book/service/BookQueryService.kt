@@ -1,5 +1,6 @@
 package com.library.app.book.service
 
+import com.library.app.book.dto.BookPageResponse
 import com.library.app.book.dto.BookResponse
 import com.library.app.book.implement.finder.BookContentFinder
 import com.library.app.book.implement.finder.BookFinder
@@ -51,11 +52,11 @@ class BookQueryService(
         )
     }
 
-    suspend fun findPageNewBook(size: Int = 1, page: Int = 1): BookResponse.BookInfoPagination =
+    suspend fun findPageNewBook(size: Int = 1, page: Int = 1): BookPageResponse.BookInfoPagination =
         twoLevelCacheManager.getOrPut(
-            CacheType.NEW_BOOK.cacheName,
+            CacheType.NEW_BOOK,
             "$page$size",
-            BookResponse.BookInfoPagination::class.java,
+            BookPageResponse.BookInfoPagination::class.java,
             CacheType.NEW_BOOK.redisExpireSeconds
         ) {
             val bookPage = bookFinder.findPage(size, page)
@@ -75,7 +76,7 @@ class BookQueryService(
                 )
             }.toList()
 
-            return@getOrPut BookResponse.BookInfoPagination(
+            return@getOrPut BookPageResponse.BookInfoPagination(
                 bookInfos = books,
                 totalPages = bookPage.totalPages,
                 totalElements = bookPage.totalElements,
@@ -85,11 +86,16 @@ class BookQueryService(
         }
 
 
-    suspend fun findPageBookPageByBookId(
+    suspend fun findPageBookContentByBookId(
         bookId: Long,
         size: Int = 1,
         page: Int = 1
-    ): PageResponse<BookResponse.BookContentInfo> {
+    ): BookPageResponse.BookContentPagination = twoLevelCacheManager.getOrPut(
+        CacheType.BOOK_CONTENT,
+        "$page$size",
+        BookPageResponse.BookContentPagination::class.java,
+        CacheType.NEW_BOOK.redisExpireSeconds
+    ) {
         val bookPagePage = bookContentFinder.findPageBookPage(bookId, size, page)
 
         val bookContents = bookPagePage.result.map {
@@ -100,8 +106,8 @@ class BookQueryService(
                 updatedAt = it.updatedAt
             )
         }
-        return PageResponse(
-            result = bookContents,
+        return@getOrPut BookPageResponse.BookContentPagination(
+            bookContentInfos = bookContents,
             totalPages = bookPagePage.totalPages,
             totalElements = bookPagePage.totalElements,
             currentPage = bookPagePage.currentPage,

@@ -15,27 +15,29 @@ class TwoLevelCacheManager(
 ) {
 
     suspend fun <T : Any> getOrPut(
-        cacheName: String,
+        cacheType: CacheType,
         key: String,
         type: Class<T>,
         redisExpireSeconds: Long = 60 * 60,
         loader: suspend () -> T
     ): T {
         if (redisConnectContext.isConnect) {
-            val localCache = caffeineCacheManager.getCache(cacheName)
+            val cacheKey = createCacheKey(cacheType, key)
+
+            val localCache = caffeineCacheManager.getCache(cacheType.cacheName)
 
             localCache?.get(key)?.let {
                 return it.get() as T
             }
 
-            val redisValue = redisClient.getData("$cacheName:$key", type)
+            val redisValue = redisClient.getData(cacheKey, type)
             if (redisValue != null) {
                 localCache?.put(key, redisValue) // 로컬 캐시에 저장
                 return redisValue
             }
             val value = loader()
             localCache?.put(key, value)
-            redisClient.setData("$cacheName:$key", value, redisExpireSeconds)
+            redisClient.setData(cacheKey, value, redisExpireSeconds)
 
             return value
         }
@@ -44,7 +46,7 @@ class TwoLevelCacheManager(
     }
 
     suspend fun <T : Any> evict(
-        cacheName: String,
+        cacheType: CacheType,
         key: String,
         type: Class<T>,
         redisExpireSeconds: Long = 60 * 60,
@@ -53,9 +55,13 @@ class TwoLevelCacheManager(
         if (redisConnectContext.isConnect) {
             redisClient.deleteData(key)
 
-            redisClient.publish(RedisTopic.CACHE_EVICT, "$cacheName-$key")
+            redisClient.publish(RedisTopic.CACHE_EVICT, createCacheKey(cacheType, key))
         }
 
         return loader()
+    }
+
+    private fun createCacheKey(cacheType: CacheType, key: String): String {
+        return "${cacheType.cacheName}-$key"
     }
 }

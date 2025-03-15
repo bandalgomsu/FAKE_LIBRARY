@@ -32,13 +32,4 @@ class BookResponse {
         val createdAt: LocalDateTime? = null,
         val updatedAt: LocalDateTime? = null,
     )
-
-    class BookInfoPagination(
-        @JsonProperty("bookInfos") val bookInfos: List<BookInfo>,
-        @JsonProperty("totalPages") val totalPages: Long,
-        @JsonProperty("totalElements") val totalElements: Long,
-        @JsonProperty("currentPage") val currentPage: Int,
-        @JsonProperty("pageSize") val pageSize: Int,
-    ) : Serializable {
-    }
 }

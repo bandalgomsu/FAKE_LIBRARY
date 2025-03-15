@@ -1,5 +1,6 @@
 package com.library.app.book.controller
 
+import com.library.app.book.dto.BookPageResponse
 import com.library.app.book.dto.BookResponse
 import com.library.app.book.service.BookQueryService
 import com.library.app.common.PageResponse
@@ -26,19 +27,19 @@ class BookQueryController(
     suspend fun findPageNewBook(
         @RequestParam size: Int = 1,
         @RequestParam page: Int = 1,
-    ): ResponseEntity<BookResponse.BookInfoPagination> {
+    ): ResponseEntity<BookPageResponse.BookInfoPagination> {
         val response = bookQueryService.findPageNewBook(size, page)
 
         return ResponseEntity.ok(response)
     }
 
     @GetMapping("/{bookId}")
-    suspend fun findPageBookPageByBookId(
+    suspend fun findPageBookContentByBookId(
         @PathVariable bookId: Long,
         @RequestParam size: Int = 1,
         @RequestParam page: Int = 1,
-    ): ResponseEntity<PageResponse<BookResponse.BookContentInfo>> {
-        val response = bookQueryService.findPageBookPageByBookId(bookId, size, page)
+    ): ResponseEntity<BookPageResponse.BookContentPagination> {
+        val response = bookQueryService.findPageBookContentByBookId(bookId, size, page)
 
         return ResponseEntity.ok(response)
     }

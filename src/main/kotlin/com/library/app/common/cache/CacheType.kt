@@ -12,6 +12,12 @@ enum class CacheType(
         "NEW_BOOK",
         TimeUtil.getRemainingSecondsToday(),
         TimeUtil.getRemainingSecondsToday(),
-        10000
+        1000
+    ),
+    BOOK_CONTENT(
+        "BOOK_CONTENT",
+        60 * 5,
+        60 * 60,
+        2000
     ),
 }
