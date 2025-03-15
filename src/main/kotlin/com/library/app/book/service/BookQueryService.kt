@@ -4,9 +4,7 @@ import com.library.app.book.dto.BookPageResponse
 import com.library.app.book.dto.BookResponse
 import com.library.app.book.implement.finder.BookContentFinder
 import com.library.app.book.implement.finder.BookFinder
-import com.library.app.book.implement.getter.BookContentGetter
 import com.library.app.book.implement.getter.BookGenreGetter
-import com.library.app.book.implement.getter.BookGetter
 import com.library.app.common.cache.CacheType
 import com.library.app.common.cache.TwoLevelCacheManager
 import kotlinx.coroutines.coroutineScope
@@ -16,9 +14,6 @@ import org.springframework.stereotype.Service
 class BookQueryService(
     private val bookFinder: BookFinder,
     private val bookContentFinder: BookContentFinder,
-
-    private val bookGetter: BookGetter,
-    private val bookContentGetter: BookContentGetter,
     private val bookGenreGetter: BookGenreGetter,
 
     private val twoLevelCacheManager: TwoLevelCacheManager
@@ -28,7 +23,7 @@ class BookQueryService(
         val bookPage = bookFinder.findPage(size, page)
 
         val books = bookPage.result.map {
-            val genres = bookGenreGetter.getAllByBookId(bookId = it.id!!).map {
+            bookGenreGetter.getAllByBookId(bookId = it.id!!).map {
                 it.genre
             }.toList()
 
