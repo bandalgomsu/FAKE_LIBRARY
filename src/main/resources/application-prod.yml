@@ -43,3 +43,7 @@ springdoc:
   show-actuator: true
   default-consumes-media-type: application/json
   default-produces-media-type: application/json
+
+llm:
+  api:
+    key: ${LLM_API_KEY}
