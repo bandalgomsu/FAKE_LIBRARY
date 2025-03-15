@@ -1,23 +1,23 @@
-package com.library.infrastructure.dao.repository.book.page
+package com.library.infrastructure.dao.repository.book.content
 
-import com.library.app.book.dao.BookPageDao
-import com.library.app.book.model.BookPage
+import com.library.app.book.dao.BookContentDao
+import com.library.app.book.model.BookContent
 import com.library.app.common.PageResponse
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
 import org.springframework.stereotype.Repository
 
 @Repository
-class BookPageRepository(
+class BookContentRepository(
     private val bookPageRepository: BookPageCoroutineRepository
-) : BookPageDao {
+) : BookContentDao {
 
-    override suspend fun getAllByBookId(bookId: Long): List<BookPage> {
+    override suspend fun getAllByBookId(bookId: Long): List<BookContent> {
         return bookPageRepository.findAllByBookId(bookId)
             .map {
-                return@map BookPage(
+                return@map BookContent(
                     id = it.id,
-                    contents = it.contents,
+                    content = it.content,
                     bookId = it.bookId,
                     createdAt = it.createdAt,
                     updatedAt = it.updatedAt
@@ -25,14 +25,14 @@ class BookPageRepository(
             }.toList()
     }
 
-    override suspend fun findPageByBookId(bookId: Long, size: Int, page: Int): PageResponse<BookPage> {
+    override suspend fun findPageByBookId(bookId: Long, size: Int, page: Int): PageResponse<BookContent> {
         val offset = (page - 1) * size
         val totalElements = bookPageRepository.countByBookId(bookId)
-        val bookPages = bookPageRepository.findPageByBookId(bookId, size, offset)
+        val bookContents = bookPageRepository.findPageByBookId(bookId, size, offset)
             .map {
-                BookPage(
+                BookContent(
                     id = it.id,
-                    contents = it.contents,
+                    content = it.content,
                     bookId = it.bookId,
                     createdAt = it.createdAt,
                     updatedAt = it.updatedAt
@@ -42,7 +42,7 @@ class BookPageRepository(
         val totalPages = (totalElements / size) + if (totalElements % size > 0) 1 else 0
 
         return PageResponse(
-            result = bookPages,
+            result = bookContents,
             totalPages = totalPages,
             totalElements = totalElements,
             currentPage = page,
@@ -50,16 +50,16 @@ class BookPageRepository(
         )
     }
 
-    override suspend fun save(bookPage: BookPage): BookPage {
+    override suspend fun save(bookContent: BookContent): BookContent {
         return bookPageRepository.save(
-            BookPageEntity(
-                contents = bookPage.contents,
-                bookId = bookPage.bookId
+            BookContentEntity(
+                content = bookContent.content,
+                bookId = bookContent.bookId
             )
         ).let {
-            BookPage(
+            BookContent(
                 id = it.id,
-                contents = it.contents,
+                content = it.content,
                 bookId = it.bookId,
                 createdAt = it.createdAt,
                 updatedAt = it.updatedAt

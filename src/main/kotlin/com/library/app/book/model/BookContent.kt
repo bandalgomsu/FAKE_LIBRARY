@@ -2,9 +2,9 @@ package com.library.app.book.model
 
 import java.time.LocalDateTime
 
-class BookPage(
+class BookContent(
     val id: Long? = null,
-    val contents: String,
+    val content: String,
     val bookId: Long,
     val createdAt: LocalDateTime? = null,
     val updatedAt: LocalDateTime? = null,

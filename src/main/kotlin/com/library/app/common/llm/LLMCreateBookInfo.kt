@@ -4,6 +4,6 @@ class LLMCreateBookInfo(
     val title: String,
     val plot: String,
     val genres: List<String>,
-    val contents: String,
+    val content: String,
 ) {
 }
