@@ -53,9 +53,9 @@ class BookQueryService(
             BookPageResponse.BookInfoPagination::class.java,
             CacheType.NEW_BOOK.redisExpireSeconds
         ) {
-            val bookPage = bookFinder.findPage(size, page)
+            val newBookPage = bookFinder.findPageNewBook(size, page)
 
-            val books = bookPage.result.map {
+            val newBooks = newBookPage.result.map {
                 bookGenreGetter.getAllByBookId(bookId = it.id!!).map {
                     it.genre
                 }.toList()
@@ -71,11 +71,11 @@ class BookQueryService(
             }.toList()
 
             return@getOrPut BookPageResponse.BookInfoPagination(
-                bookInfos = books,
-                totalPages = bookPage.totalPages,
-                totalElements = bookPage.totalElements,
-                currentPage = bookPage.currentPage,
-                pageSize = bookPage.pageSize
+                bookInfos = newBooks,
+                totalPages = newBookPage.totalPages,
+                totalElements = newBookPage.totalElements,
+                currentPage = newBookPage.currentPage,
+                pageSize = newBookPage.pageSize
             )
         }
 
