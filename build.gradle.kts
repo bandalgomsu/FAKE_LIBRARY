@@ -41,6 +41,9 @@ dependencies {
     //Caffeine
     implementation("com.github.ben-manes.caffeine:caffeine:3.2.0")
 
+    //Prometheus
+    implementation("io.micrometer:micrometer-registry-prometheus")
+
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("io.projectreactor:reactor-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
