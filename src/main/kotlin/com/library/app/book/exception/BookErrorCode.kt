@@ -6,6 +6,8 @@ import org.springframework.http.HttpStatus
 enum class BookErrorCode(val code: String, val message: String, var status: Int) : ErrorCode {
 
     BOOK_NOT_FOUND("B01", "BOOK_NOT_FOUND", HttpStatus.BAD_REQUEST.value()),
+    BOOK_CONTENT_NOT_FOUND("B02", "BOOK_CONTENT_NOT_FOUND", HttpStatus.BAD_REQUEST.value()),
+
     ;
 
     override fun getCodeValue(): String {
