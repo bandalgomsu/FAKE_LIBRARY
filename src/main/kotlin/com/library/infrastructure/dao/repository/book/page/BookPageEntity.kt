@@ -5,7 +5,7 @@ import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Table
 
-@Table("book_genre")
+@Table("book_page")
 class BookPageEntity(
     @Id
     var id: Long? = null,
