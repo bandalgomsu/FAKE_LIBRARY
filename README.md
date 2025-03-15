@@ -12,7 +12,8 @@
 
 ## ERD
 
-![ERD.png](..%2F..%2F..%2F..%2FDownloads%2FERD.png)
+<img width="1064" alt="ERD" src="https://github.com/user-attachments/assets/1d6a61c7-5c34-4bdc-a098-4deb88f0e7d2" />
+
 
 ## Cording Standard
 
