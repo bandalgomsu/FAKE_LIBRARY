@@ -51,7 +51,6 @@ class BookQueryService(
             CacheType.NEW_BOOK,
             "$page$size",
             BookPageResponse.BookInfoPagination::class.java,
-            CacheType.NEW_BOOK.redisExpireSeconds
         ) {
             val newBookPage = bookFinder.findPageNewBook(size, page)
 
@@ -88,7 +87,6 @@ class BookQueryService(
         CacheType.BOOK_CONTENT,
         "$page$size",
         BookPageResponse.BookContentPagination::class.java,
-        CacheType.NEW_BOOK.redisExpireSeconds
     ) {
         val bookPagePage = bookContentFinder.findPageBookPage(bookId, size, page)
 
