@@ -8,12 +8,12 @@ import kotlinx.coroutines.flow.toList
 import org.springframework.stereotype.Repository
 
 @Repository
-class BookContentRepository(
-    private val bookPageRepository: BookPageCoroutineRepository
+class BookContentEntityRepository(
+    private val bookContentRepository: BookContentCoroutineRepository
 ) : BookContentDao {
 
     override suspend fun getAllByBookId(bookId: Long): List<BookContent> {
-        return bookPageRepository.findAllByBookId(bookId)
+        return bookContentRepository.findAllByBookId(bookId)
             .map {
                 return@map BookContent(
                     id = it.id,
@@ -27,8 +27,8 @@ class BookContentRepository(
 
     override suspend fun findPageByBookId(bookId: Long, size: Int, page: Int): PageResponse<BookContent> {
         val offset = (page - 1) * size
-        val totalElements = bookPageRepository.countByBookId(bookId)
-        val bookContents = bookPageRepository.findPageByBookId(bookId, size, offset)
+        val totalElements = bookContentRepository.countByBookId(bookId)
+        val bookContents = bookContentRepository.findPageByBookId(bookId, size, offset)
             .map {
                 BookContent(
                     id = it.id,
@@ -51,7 +51,7 @@ class BookContentRepository(
     }
 
     override suspend fun save(bookContent: BookContent): BookContent {
-        return bookPageRepository.save(
+        return bookContentRepository.save(
             BookContentEntity(
                 content = bookContent.content,
                 bookId = bookContent.bookId
