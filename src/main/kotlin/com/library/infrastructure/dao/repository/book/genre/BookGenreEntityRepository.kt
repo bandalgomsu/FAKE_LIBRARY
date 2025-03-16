@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.toList
 import org.springframework.stereotype.Repository
 
 @Repository
-class BookGenreRepository(
+class BookGenreEntityRepository(
     private val bookGenreRepository: BookGenreCoroutineRepository
 ) : BookGenreDao {
 

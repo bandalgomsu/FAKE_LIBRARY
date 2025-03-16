@@ -44,6 +44,8 @@ dependencies {
     //Prometheus
     implementation("io.micrometer:micrometer-registry-prometheus")
 
+    testImplementation("io.r2dbc:r2dbc-h2:1.0.0.RELEASE")
+    testImplementation("com.h2database:h2:2.2.220")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("io.projectreactor:reactor-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")

@@ -4,7 +4,7 @@ import kotlinx.coroutines.flow.Flow
 import org.springframework.data.r2dbc.repository.Query
 import org.springframework.data.repository.kotlin.CoroutineCrudRepository
 
-interface BookPageCoroutineRepository : CoroutineCrudRepository<BookContentEntity, Long> {
+interface BookContentCoroutineRepository : CoroutineCrudRepository<BookContentEntity, Long> {
     suspend fun findAllByBookId(bookId: Long): Flow<BookContentEntity>
 
 
