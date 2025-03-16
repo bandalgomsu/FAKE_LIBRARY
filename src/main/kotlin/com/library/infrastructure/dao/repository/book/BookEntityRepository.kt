@@ -88,7 +88,7 @@ class BookEntityRepository(
         return bookRepository.save(
             BookEntity(
                 plot = book.plot,
-                title = book.plot,
+                title = book.title,
                 userId = book.userId,
             )
         ).let {

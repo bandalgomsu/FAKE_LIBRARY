@@ -1,7 +1,9 @@
 package com.library.infrastructure.repository.book
 
+import com.library.app.book.model.Book
 import com.library.infrastructure.dao.repository.book.BookCoroutineRepository
 import com.library.infrastructure.dao.repository.book.BookEntity
+import com.library.infrastructure.dao.repository.book.BookEntityRepository
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.AfterEach
@@ -15,10 +17,12 @@ import kotlin.test.assertEquals
 
 @ActiveProfiles("test") // application-test.yml을 사용하도록 설정
 @DataR2dbcTest
-class BookCoroutineRepositoryTest {
-
+class BookEntityRepositoryTest(
     @Autowired
-    private lateinit var bookCoroutineRepository: BookCoroutineRepository
+    private val bookCoroutineRepository: BookCoroutineRepository
+) {
+
+    private var bookEntityRepository: BookEntityRepository = BookEntityRepository(bookCoroutineRepository)
 
     private val localDateTime = LocalDateTime.of(2025, 3, 3, 3, 3)
 
@@ -47,31 +51,45 @@ class BookCoroutineRepositoryTest {
     }
 
     @Test
+    fun GET_BY_ID() = runTest {
+        val book = bookEntityRepository.getById(1)!!
+
+        assertEquals(1, book.id)
+        assertEquals("p1", book.plot)
+        assertEquals("t1", book.title)
+    }
+
+    @Test
     fun FIND_PAGE() = runTest {
-        val books = bookCoroutineRepository.findPage(3, 0).toList()
+        val bookPage = bookEntityRepository.findPage(3, 1)
 
-        assertEquals(3, books.size)
+        assertEquals(3, bookPage.totalElements)
+        assertEquals(3, bookPage.pageSize)
+        assertEquals(1, bookPage.currentPage)
+        assertEquals(1, bookPage.totalPages)
     }
 
     @Test
-    fun FIND_PAGE_BY_CREATED_AT_RANGE() = runTest {
-        val books = bookCoroutineRepository.findPageByCreatedAtRange(
-            localDateTime.minusDays(1),
-            localDateTime.plusDays(1),
-            3,
-            0
-        ).toList()
+    fun FIND_PAGE_BY_CREATED_AT_BETWEEN() = runTest {
+        val bookPage =
+            bookEntityRepository.findPageByCreatedAtBetween(3, 1, localDateTime.minusDays(1), localDateTime.plusDays(1))
 
-        assertEquals(3, books.size)
+        assertEquals(3, bookPage.totalElements)
+        assertEquals(3, bookPage.pageSize)
+        assertEquals(1, bookPage.currentPage)
+        assertEquals(1, bookPage.totalPages)
     }
 
     @Test
-    fun COUNT_BY_CREATED_AT_RANGE() = runTest {
-        val count = bookCoroutineRepository.countByCreatedAtBetween(
-            localDateTime.minusDays(1),
-            localDateTime.plusDays(1)
+    fun SAVE() = runTest {
+        val book = Book(
+            plot = "p4",
+            title = "t4"
         )
 
-        assertEquals(3, count)
+        val savedBook = bookEntityRepository.save(book)
+
+        assertEquals("p4", savedBook.plot)
+        assertEquals("t4", savedBook.title)
     }
 }
