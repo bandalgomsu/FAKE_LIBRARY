@@ -18,7 +18,6 @@ class TwoLevelCacheManager(
         cacheType: CacheType,
         key: String,
         type: Class<T>,
-        redisExpireSeconds: Long = 60 * 60,
         loader: suspend () -> T
     ): T {
         if (redisConnectContext.isConnect) {
@@ -37,7 +36,7 @@ class TwoLevelCacheManager(
             }
             val value = loader()
             localCache?.put(key, value)
-            redisClient.setData(cacheKey, value, redisExpireSeconds)
+            redisClient.setData(cacheKey, value, cacheType.redisExpireSeconds)
 
             return value
         }
@@ -49,7 +48,6 @@ class TwoLevelCacheManager(
         cacheType: CacheType,
         key: String,
         type: Class<T>,
-        redisExpireSeconds: Long = 60 * 60,
         loader: suspend () -> T
     ): T {
         if (redisConnectContext.isConnect) {
@@ -60,7 +58,7 @@ class TwoLevelCacheManager(
 
         return loader()
     }
-
+    
     private fun createCacheKey(cacheType: CacheType, key: String): String {
         return "${cacheType.cacheName}-$key"
     }

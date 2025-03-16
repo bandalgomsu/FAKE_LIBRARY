@@ -11,5 +11,6 @@ interface RedisClient {
     suspend fun <T : Any> getData(key: String, type: Class<T>): T?
     suspend fun getData(key: String): Any?
     suspend fun deleteData(key: String): Boolean
+    suspend fun deleteAllByPattern(pattern: String): Boolean
     suspend fun publish(topic: RedisTopic, message: String)
 }
