@@ -23,7 +23,7 @@ class BookQueryService(
         val bookPage = bookFinder.findPage(size, page)
 
         val books = bookPage.result.map {
-            bookGenreGetter.getAllByBookId(bookId = it.id!!).map {
+            val genres = bookGenreGetter.getAllByBookId(bookId = it.id!!).map {
                 it.genre
             }.toList()
 
@@ -31,7 +31,7 @@ class BookQueryService(
                 bookId = it.id,
                 title = it.title,
                 plot = it.plot,
-                genres = it.genres,
+                genres = genres,
                 createdAt = it.createdAt,
                 updatedAt = it.updatedAt
             )
@@ -56,7 +56,7 @@ class BookQueryService(
             val newBookPage = bookFinder.findPageNewBook(size, page)
 
             val newBooks = newBookPage.result.map {
-                bookGenreGetter.getAllByBookId(bookId = it.id!!).map {
+                val genres = bookGenreGetter.getAllByBookId(bookId = it.id!!).map {
                     it.genre
                 }.toList()
 
@@ -64,7 +64,7 @@ class BookQueryService(
                     bookId = it.id,
                     title = it.title,
                     plot = it.plot,
-                    genres = it.genres,
+                    genres = genres,
                     createdAt = it.createdAt,
                     updatedAt = it.updatedAt
                 )
