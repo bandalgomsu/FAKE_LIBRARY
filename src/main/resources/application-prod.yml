@@ -30,7 +30,7 @@ management:
 
 logging:
   level:
-    org.springframework.r2dbc.core: debug
+    org.springframework.r2dbc.core: info
 server:
   port: 8081
 
