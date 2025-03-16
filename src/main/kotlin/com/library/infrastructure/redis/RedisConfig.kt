@@ -21,12 +21,14 @@ import org.springframework.data.redis.serializer.StringRedisSerializer
 
 @Configuration
 @EnableAutoConfiguration(exclude = [RedisAutoConfiguration::class, RedisReactiveAutoConfiguration::class])
-class RedisConfig {
+class RedisConfig(
     @Value("\${spring.data.redis.host}")
-    private val host: String? = null
-
+    private val host: String,
     @Value("\${spring.data.redis.port}")
-    private val port = 0
+    private val port: Int,
+    @Value("\${spring.data.redis.ssl.enabled}")
+    private val isUseSsl: Boolean
+) {
 
     @Bean
     fun clientResources(): ClientResources {
@@ -35,11 +37,16 @@ class RedisConfig {
 
     @Bean
     fun redisConnectionFactory(): ReactiveRedisConnectionFactory {
+        val config = LettuceClientConfiguration.builder()
+            .clientResources(clientResources())
+
+        if (isUseSsl) {
+            config.useSsl()
+        }
+
         return LettuceConnectionFactory(
             LettuceConnectionFactory.createRedisConfiguration("redis://$host:$port"),
-            LettuceClientConfiguration.builder().clientResources(clientResources())
-                .useSsl()
-                .build()
+            config.build()
         )
     }
 

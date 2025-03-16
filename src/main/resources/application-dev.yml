@@ -12,7 +12,7 @@ spring:
       host: ${REDIS_HOST}
       port: ${REDIS_PORT}
       ssl:
-        enabled: true
+        enabled: false
 
 management:
   health:
@@ -30,7 +30,7 @@ management:
 
 logging:
   level:
-    org.springframework.r2dbc.core: debug
+    org.springframework.r2dbc.core: error
 server:
   port: 8081
 
