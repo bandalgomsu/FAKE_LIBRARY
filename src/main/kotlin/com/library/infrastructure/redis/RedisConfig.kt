@@ -37,7 +37,9 @@ class RedisConfig {
     fun redisConnectionFactory(): ReactiveRedisConnectionFactory {
         return LettuceConnectionFactory(
             LettuceConnectionFactory.createRedisConfiguration("redis://$host:$port"),
-            LettuceClientConfiguration.builder().clientResources(clientResources()).build()
+            LettuceClientConfiguration.builder().clientResources(clientResources())
+                .useSsl()
+                .build()
         )
     }
 
