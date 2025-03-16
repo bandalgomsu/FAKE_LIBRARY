@@ -15,7 +15,7 @@ import org.springframework.test.context.ActiveProfiles
 import java.time.LocalDateTime
 import kotlin.test.assertEquals
 
-@ActiveProfiles("test") // application-test.yml을 사용하도록 설정
+@ActiveProfiles("test")
 @DataR2dbcTest
 class BookEntityRepositoryTest(
     @Autowired
