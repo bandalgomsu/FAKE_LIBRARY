@@ -50,6 +50,6 @@ jobs:
             cd ./project
             sudo docker stop ${{ secrets.SERVICE_NAME }}
             sudo docker rm ${{ secrets.SERVICE_NAME }}
-            sudo docker rmi $(sudo docker images -q) 
+            sudo docker rmi $(sudo docker images -q)
             sudo docker pull ${{ secrets.DOCKER_REPO }}/${{ secrets.SERVICE_NAME }}
             sudo docker run -i -t --log-driver=awslogs --log-opt awslogs-region=ap-northeast-2 --log-opt awslogs-group=${{ secrets.LOG_GROUP }} --log-opt awslogs-stream=${{ secrets.LOG_GROUP }}-stream --env-file ./.env -p 8081:8081 -d --name ${{ secrets.SERVICE_NAME }} ${{ secrets.DOCKER_REPO }}/${{ secrets.SERVICE_NAME }}:latest
