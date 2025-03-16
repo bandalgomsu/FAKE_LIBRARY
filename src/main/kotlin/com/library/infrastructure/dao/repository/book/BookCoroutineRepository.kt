@@ -41,7 +41,5 @@ interface BookCoroutineRepository : CoroutineCrudRepository<BookEntity, Long> {
     suspend fun countByCreatedAtBetween(
         startDate: LocalDateTime,
         endDate: LocalDateTime,
-        size: Int,
-        offset: Int
     ): Long
 }

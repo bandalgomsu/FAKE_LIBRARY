@@ -57,7 +57,7 @@ class BookEntityRepository(
         endData: LocalDateTime
     ): PageResponse<Book> {
         val offset = (page - 1) * size
-        val totalElements = bookRepository.countByCreatedAtBetween(startDate, endData, size, offset)
+        val totalElements = bookRepository.countByCreatedAtBetween(startDate, endData)
 
         val books = bookRepository.findPageByCreatedAtRange(
             startDate, endData, size, offset
