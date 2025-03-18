@@ -21,7 +21,5 @@ interface CacheManager {
         type: Class<T>,
         data: T
     ) {
-
     }
-    
 }
