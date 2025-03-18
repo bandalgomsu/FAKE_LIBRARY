@@ -85,7 +85,7 @@ class BookQueryService(
         page: Int = 1
     ): BookPageResponse.BookContentPagination = twoLevelCacheManager.getOrLoad(
         CacheType.BOOK_CONTENT,
-        "$page$size",
+        "$bookId$page$size",
         BookPageResponse.BookContentPagination::class.java,
     ) {
         val bookPagePage = bookContentFinder.findPageBookPage(bookId, size, page)
