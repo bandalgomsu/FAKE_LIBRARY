@@ -44,6 +44,8 @@ class TwoLevelCacheManager(
         val cacheKey = cacheType.createCacheKey(key)
 
         val data = loader()
+        
+        redisClient.publish(RedisTopic.CACHE_EVICT, cacheType.createCacheKey(key))
 
         return loader()
     }
