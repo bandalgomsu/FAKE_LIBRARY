@@ -3,63 +3,54 @@ package com.library.app.common.cache
 import com.library.app.common.redis.RedisClient
 import com.library.app.common.redis.RedisConnectContext
 import com.library.app.common.redis.RedisTopic
-import org.springframework.cache.caffeine.CaffeineCacheManager
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Component
 
 
 @Component
 class TwoLevelCacheManager(
-    private val caffeineCacheManager: CaffeineCacheManager,
+    @Qualifier("localCaffeineCacheManager") private val localCacheManager: CacheManager,
+    @Qualifier("distributeRedisCacheManager") private val distributeCacheManager: CacheManager,
+
     private val redisClient: RedisClient,
     private val redisConnectContext: RedisConnectContext,
-) {
+) : CacheManager {
 
-    suspend fun <T : Any> getOrPut(
+    override suspend fun <T : Any> getOrLoad(
         cacheType: CacheType,
         key: String,
         type: Class<T>,
         loader: suspend () -> T
     ): T {
         if (redisConnectContext.isConnect) {
-            val cacheKey = createCacheKey(cacheType, key)
+            localCacheManager.getOrLoad(cacheType, key, type) {
+                val data = distributeCacheManager.getOrLoad(cacheType, key, type) { loader() }
 
-            val localCache = caffeineCacheManager.getCache(cacheType.cacheName)
+                localCacheManager.put(cacheType, key, type, data)
 
-            localCache?.get(key)?.let {
-                return it.get() as T
+                return@getOrLoad data
             }
-
-            val redisValue = redisClient.getData(cacheKey, type)
-            if (redisValue != null) {
-                localCache?.put(key, redisValue) // 로컬 캐시에 저장
-                return redisValue
-            }
-            val value = loader()
-            localCache?.put(key, value)
-            redisClient.setData(cacheKey, value, cacheType.redisExpireSeconds)
-
-            return value
         }
 
         return loader()
     }
 
-    suspend fun <T : Any> evict(
+    override suspend fun <T : Any> evict(
         cacheType: CacheType,
         key: String,
         type: Class<T>,
         loader: suspend () -> T
     ): T {
-        if (redisConnectContext.isConnect) {
-            redisClient.deleteData(key)
+        val cacheKey = createCacheKey(cacheType, key)
 
-            redisClient.publish(RedisTopic.CACHE_EVICT, createCacheKey(cacheType, key))
-        }
+        val data = loader()
 
-        return loader()
+        redisClient.publish(RedisTopic.CACHE_EVICT, cacheKey)
+
+        return data
     }
-    
-    private fun createCacheKey(cacheType: CacheType, key: String): String {
+
+    fun createCacheKey(cacheType: CacheType, key: String): String {
         return "${cacheType.cacheName}-$key"
     }
 }
