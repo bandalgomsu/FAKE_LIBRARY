@@ -19,5 +19,9 @@ enum class CacheType(
         60 * 5,
         60 * 60,
         2000
-    ),
+    );
+
+    fun createCacheKey(key: String): String {
+        return "$cacheName-$key"
+    }
 }
