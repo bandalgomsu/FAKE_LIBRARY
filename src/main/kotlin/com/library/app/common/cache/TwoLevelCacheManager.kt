@@ -23,12 +23,12 @@ class TwoLevelCacheManager(
         loader: suspend () -> T
     ): T {
         if (redisConnectContext.isConnect) {
-            localCacheManager.getOrLoad(cacheType, key, type) {
+            return localCacheManager.getOrLoad(cacheType, key, type) {
                 val data = distributeCacheManager.getOrLoad(cacheType, key, type) { loader() }
 
                 localCacheManager.put(cacheType, key, type, data)
 
-                return@getOrLoad data
+                data
             }
         }
 
@@ -41,16 +41,12 @@ class TwoLevelCacheManager(
         type: Class<T>,
         loader: suspend () -> T
     ): T {
-        val cacheKey = createCacheKey(cacheType, key)
+        val cacheKey = cacheType.createCacheKey(key)
 
         val data = loader()
 
         redisClient.publish(RedisTopic.CACHE_EVICT, cacheKey)
 
         return data
-    }
-
-    fun createCacheKey(cacheType: CacheType, key: String): String {
-        return "${cacheType.cacheName}-$key"
     }
 }

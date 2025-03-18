@@ -14,7 +14,7 @@ class LocalCaffeineCacheManager(
         type: Class<T>,
         loader: suspend () -> T
     ): T {
-        val cacheKey = createCacheKey(cacheType, key)
+        val cacheKey = cacheType.createCacheKey(key)
 
         val localCache = caffeineCacheManager.getCache(cacheType.cacheName)
 
@@ -34,7 +34,7 @@ class LocalCaffeineCacheManager(
         type: Class<T>,
         loader: suspend () -> T
     ): T {
-        val cacheKey = createCacheKey(cacheType, key)
+        val cacheKey = cacheType.createCacheKey(key)
 
         val localCache = caffeineCacheManager.getCache(cacheType.cacheName)
 
@@ -45,12 +45,9 @@ class LocalCaffeineCacheManager(
 
     override suspend fun <T : Any> put(cacheType: CacheType, key: String, type: Class<T>, data: T) {
         val cache = caffeineCacheManager.getCache(cacheType.cacheName)
-        val cacheKey = createCacheKey(cacheType, key)
+        val cacheKey = cacheType.createCacheKey(key)
 
         cache?.put(cacheKey, data)
     }
 
-    private fun createCacheKey(cacheType: CacheType, key: String): String {
-        return "${cacheType.cacheName}-$key"
-    }
 }

@@ -14,7 +14,7 @@ class DistributeRedisCacheManager(
         type: Class<T>,
         loader: suspend () -> T
     ): T {
-        val cacheKey = createCacheKey(cacheType, key)
+        val cacheKey = cacheType.createCacheKey(key)
 
         val redisValue = redisClient.getData(cacheKey, type)
         if (redisValue != null) {
@@ -33,7 +33,7 @@ class DistributeRedisCacheManager(
         type: Class<T>,
         loader: suspend () -> T
     ): T {
-        val cacheKey = createCacheKey(cacheType, key)
+        val cacheKey = cacheType.createCacheKey(key)
 
         val value = loader()
 
@@ -42,7 +42,4 @@ class DistributeRedisCacheManager(
         return value
     }
 
-    private fun createCacheKey(cacheType: CacheType, key: String): String {
-        return "${cacheType.cacheName}-$key"
-    }
 }
