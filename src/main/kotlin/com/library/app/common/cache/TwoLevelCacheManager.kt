@@ -24,11 +24,7 @@ class TwoLevelCacheManager(
     ): T {
         if (redisConnectContext.isConnect) {
             return localCacheManager.getOrLoad(cacheType, key, type) {
-                val data = distributeCacheManager.getOrLoad(cacheType, key, type) { loader() }
-
-                localCacheManager.put(cacheType, key, type, data)
-
-                data
+                distributeCacheManager.getOrLoad(cacheType, key, type) { loader() }
             }
         }
 
