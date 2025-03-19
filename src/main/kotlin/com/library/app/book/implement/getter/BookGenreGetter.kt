@@ -11,4 +11,5 @@ class BookGenreGetter(
     suspend fun getAllByBookId(bookId: Long): List<BookGenre> {
         return bookGenreDao.getAllByBookId(bookId)
     }
+    
 }
