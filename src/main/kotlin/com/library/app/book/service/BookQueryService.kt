@@ -88,7 +88,7 @@ class BookQueryService(
         "$bookId$page$size",
         BookPageResponse.BookContentPagination::class.java,
     ) {
-        val bookPagePage = bookContentFinder.findPageBookPage(bookId, size, page)
+        val bookPagePage = bookContentFinder.findPageByBookId(bookId, size, page)
 
         val bookContents = bookPagePage.result.map {
             BookResponse.BookContentInfo(
