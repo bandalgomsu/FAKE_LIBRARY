@@ -15,6 +15,7 @@ class BookResponse {
         @JsonProperty("title") val title: String,
         @JsonProperty("plot") val plot: String,
         @JsonProperty("genres") val genres: List<String>,
+        @JsonProperty("author") val author: String = "가짜 작가",
         @JsonProperty("createdAt") val createdAt: LocalDateTime? = null,
         @JsonProperty("updatedAt") val updatedAt: LocalDateTime? = null
     ) : Serializable

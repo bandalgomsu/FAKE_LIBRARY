@@ -22,4 +22,8 @@ interface CacheManager {
         data: T
     ) {
     }
+
+    suspend fun clearAll(cacheType: CacheType) {
+        
+    }
 }

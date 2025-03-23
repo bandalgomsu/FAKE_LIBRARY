@@ -50,4 +50,7 @@ class LocalCaffeineCacheManager(
         cache?.put(cacheKey, data)
     }
 
+    override suspend fun clearAll(cacheType: CacheType) {
+        caffeineCacheManager.getCache(cacheType.cacheName)?.clear()
+    }
 }

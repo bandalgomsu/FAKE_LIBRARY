@@ -43,4 +43,9 @@ class TwoLevelCacheManager(
 
         return data
     }
+
+    override suspend fun clearAll(cacheType: CacheType) {
+        localCacheManager.clearAll(cacheType)
+        distributeCacheManager.clearAll(cacheType)
+    }
 }
