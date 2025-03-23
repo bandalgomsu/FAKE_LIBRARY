@@ -46,7 +46,7 @@ class BookQueryService(
         )
     }
 
-    suspend fun findPageNewBook(size: Int = 1, page: Int = 1): BookPageResponse.BookInfoPagination =
+    suspend fun findPageNewBook(size: Int = 10, page: Int = 1): BookPageResponse.BookInfoPagination =
         twoLevelCacheManager.getOrLoad(
             CacheType.NEW_BOOK,
             "$page$size",
@@ -69,7 +69,7 @@ class BookQueryService(
                 )
             }.toList()
 
-            return@getOrLoad BookPageResponse.BookInfoPagination(
+            BookPageResponse.BookInfoPagination(
                 bookInfos = newBooks,
                 totalPages = newBookPage.totalPages,
                 totalElements = newBookPage.totalElements,
@@ -92,7 +92,7 @@ class BookQueryService(
 
         val bookContents = bookPagePage.result.map {
             BookResponse.BookContentInfo(
-                bookPageId = it.id!!,
+                bookContentId = it.id!!,
                 content = it.content,
                 createdAt = it.createdAt,
                 updatedAt = it.updatedAt
