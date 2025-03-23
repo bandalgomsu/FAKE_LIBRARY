@@ -4,8 +4,8 @@ import com.library.app.book.implement.saver.BookContentSaver
 import com.library.app.book.implement.saver.BookGenreSaver
 import com.library.app.book.implement.saver.BookSaver
 import com.library.app.common.cache.CacheType
+import com.library.app.common.cache.TwoLevelCacheManager
 import com.library.app.common.llm.LLMClient
-import com.library.app.common.redis.RedisClient
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -20,7 +20,7 @@ class BookScheduleService(
     private val bookGenreSaver: BookGenreSaver,
     private val bookContentSaver: BookContentSaver,
 
-    private val redisClient: RedisClient,
+    private val twoLevelCacheManager: TwoLevelCacheManager,
 
     private val llmClient: LLMClient,
 ) {
@@ -55,6 +55,7 @@ class BookScheduleService(
             delay(5000)
         }
 
-        redisClient.deleteAllByPattern("${CacheType.NEW_BOOK.cacheName}*")
+        logger.info("CACHE_CLEAR")
+        twoLevelCacheManager.clearAll(CacheType.NEW_BOOK)
     }
 }

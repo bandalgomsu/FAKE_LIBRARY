@@ -42,4 +42,7 @@ class DistributeRedisCacheManager(
         return value
     }
 
+    override suspend fun clearAll(cacheType: CacheType) {
+        redisClient.deleteAllByPattern("${cacheType.cacheName}*")
+    }
 }
