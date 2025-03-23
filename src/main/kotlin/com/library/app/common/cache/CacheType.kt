@@ -10,7 +10,7 @@ enum class CacheType(
 ) {
     NEW_BOOK(
         "NEW_BOOK",
-        TimeUtil.getRemainingSecondsToday(),
+        60 * 10,
         TimeUtil.getRemainingSecondsToday(),
         1000
     ),
