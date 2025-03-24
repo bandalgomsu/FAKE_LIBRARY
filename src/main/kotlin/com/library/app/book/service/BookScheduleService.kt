@@ -5,6 +5,7 @@ import com.library.app.book.implement.saver.BookGenreSaver
 import com.library.app.book.implement.saver.BookSaver
 import com.library.app.common.cache.CacheType
 import com.library.app.common.cache.TwoLevelCacheManager
+import com.library.app.common.llm.BookKeyword
 import com.library.app.common.llm.LLMClient
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -30,7 +31,13 @@ class BookScheduleService(
     suspend fun startCreateBookSchedule() {
         repeat(15 * 100) {
             try {
-                val bookInfo = llmClient.createBookInfo()
+                val randomOrders = listOf(
+                    (Math.random() * BookKeyword.entries.size).toInt(),
+                    (Math.random() * BookKeyword.entries.size).toInt(),
+                    (Math.random() * BookKeyword.entries.size).toInt(),
+                )
+
+                val bookInfo = llmClient.createBookInfo(BookKeyword.getKeywordsByOrders(randomOrders))
 
                 val savedBook = bookSaver.save(bookInfo.plot, bookInfo.title)
 
