@@ -3,6 +3,7 @@ package com.library.app.book.service
 import com.library.app.book.implement.saver.BookContentSaver
 import com.library.app.book.implement.saver.BookGenreSaver
 import com.library.app.book.implement.saver.BookSaver
+import com.library.app.book.model.BookGenreEnum
 import com.library.app.common.cache.CacheType
 import com.library.app.common.cache.TwoLevelCacheManager
 import com.library.app.common.llm.BookKeyword
@@ -39,14 +40,18 @@ class BookScheduleService(
 
                 val bookInfo = llmClient.createBookInfo(BookKeyword.getKeywordsByOrders(randomOrders))
 
+                val bookGenres = bookInfo.genres.map {
+                    BookGenreEnum.valueOf(it)
+                }
+
                 val savedBook = bookSaver.save(bookInfo.plot, bookInfo.title)
 
                 coroutineScope {
                     val content = async { bookContentSaver.save(bookInfo.content, savedBook.id!!) }
 
                     val genres = async {
-                        bookInfo.genres.forEach {
-                            bookGenreSaver.save(it, savedBook.id!!)
+                        bookGenres.forEach {
+                            bookGenreSaver.save(it.genreName, savedBook.id!!)
                         }
                     }
 

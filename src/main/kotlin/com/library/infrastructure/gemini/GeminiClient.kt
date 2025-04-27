@@ -1,6 +1,7 @@
 package com.library.infrastructure.gemini
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.library.app.book.model.BookGenreEnum
 import com.library.app.common.llm.LLMClient
 import com.library.app.common.llm.LLMCreateBookInfo
 import kotlinx.coroutines.reactor.awaitSingle
@@ -30,8 +31,11 @@ class GeminiClient(
             아래는 키워드 예시야 ! 이런 키워드를 조합해서 책을 만들어줘 !
             ${keywords.joinToString(",")}
             
+            그리고 장르는 아래에 장르 리스트에서만 선택해줘 
+            ${BookGenreEnum.entries.map { it.genreName }}
+            
             - 책 제목: 임의의 제목
-            - 장르 : 최대 4개의 장르 (예: 판타지, SF, 자기 계발 등등)
+            - 장르 : 최대 4개의 장르 (위에 예시에 존재하는 장르에서만 나와야해)
             - 줄거리 : 간략한 줄거리 (최대 100자)
             - 책 내용: 책 내용의 일부 (최대한 1000자를 맞춰줘 , 기승전결에 맞게 내용이 마무리 돼야하고 , 가독성을 위해 문단을 나눠줘)
 
@@ -39,7 +43,7 @@ class GeminiClient(
             
             {
               "title": "황금의 도시",
-              "genres": ["판타지", "모험"],
+              "genres": ["판타지"],
               "plot": "잃어버린 황금 도시를 찾는 용감한 탐험가들의 이야기.",
               "content": "깊은 숲 속에서 고대 유적을 발견한 탐험대는..."
             }

@@ -13,7 +13,7 @@ class BookPageResponse {
     ) : Serializable {
     }
 
-    class BookContentPagination(
+    class BookContentsPagination(
         @JsonProperty("bookContentInfos") val bookContentInfos: List<BookResponse.BookContentInfo>,
         @JsonProperty("totalPages") val totalPages: Long,
         @JsonProperty("totalElements") val totalElements: Long,

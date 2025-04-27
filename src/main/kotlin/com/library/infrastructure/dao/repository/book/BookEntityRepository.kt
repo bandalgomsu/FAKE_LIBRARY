@@ -10,16 +10,13 @@ import java.time.LocalDateTime
 
 @Repository
 class BookEntityRepository(
-    private val bookRepository: BookCoroutineRepository
-) : BookDao {
+    private val bookRepository: BookCoroutineRepository,
+    private val bookRowRepository: BookRowRepository,
+
+    ) : BookDao {
     override suspend fun getById(bookId: Long): Book? {
         return bookRepository.findById(bookId)?.let {
-            return@let Book(
-                id = it.id,
-                plot = it.plot,
-                title = it.title,
-                userId = it.userId
-            )
+            return@let it.toModel()
         }
     }
 
@@ -28,16 +25,8 @@ class BookEntityRepository(
         val totalElements = bookRepository.count()
 
         val books = bookRepository.findPage(size, offset)
-            .map {
-                Book(
-                    id = it.id,
-                    plot = it.plot,
-                    title = it.title,
-                    userId = it.userId,
-                    createdAt = it.createdAt,
-                    updatedAt = it.updatedAt
-                )
-            }.toList()
+            .map { it.toModel() }
+            .toList()
 
         val totalPages = (totalElements / size) + if (totalElements % size > 0) 1 else 0
 
@@ -59,18 +48,9 @@ class BookEntityRepository(
         val offset = (page - 1) * size
         val totalElements = bookRepository.countByCreatedAtBetween(startDate, endData)
 
-        val books = bookRepository.findPageByCreatedAtRange(
-            startDate, endData, size, offset
-        )
+        val books = bookRepository.findPageByCreatedAtRange(startDate, endData, size, offset)
             .map {
-                Book(
-                    id = it.id,
-                    plot = it.plot,
-                    title = it.title,
-                    userId = it.userId,
-                    createdAt = it.createdAt,
-                    updatedAt = it.updatedAt
-                )
+                it.toModel()
             }.toList()
 
         val totalPages = (totalElements / size) + if (totalElements % size > 0) 1 else 0
@@ -91,15 +71,6 @@ class BookEntityRepository(
                 title = book.title,
                 userId = book.userId,
             )
-        ).let {
-            Book(
-                id = it.id,
-                plot = it.plot,
-                title = it.title,
-                userId = it.userId,
-                createdAt = it.createdAt,
-                updatedAt = it.updatedAt
-            )
-        }
+        ).toModel()
     }
 }

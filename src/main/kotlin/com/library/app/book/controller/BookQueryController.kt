@@ -32,12 +32,23 @@ class BookQueryController(
     }
 
     @GetMapping("/{bookId}")
-    suspend fun findPageBookContentByBookId(
+    suspend fun findPageBookContentsByBookId(
         @PathVariable bookId: Long,
         @RequestParam size: Int = 1,
         @RequestParam page: Int = 1,
-    ): ResponseEntity<BookPageResponse.BookContentPagination> {
-        val response = bookQueryService.findPageBookContentByBookId(bookId, size, page)
+    ): ResponseEntity<BookPageResponse.BookContentsPagination> {
+        val response = bookQueryService.findPageBookContentsByBookId(bookId, size, page)
+
+        return ResponseEntity.ok(response)
+    }
+
+    @GetMapping("/search/genre")
+    suspend fun findPageBookByGenres(
+        @RequestParam genres: List<String>,
+        @RequestParam size: Int = 1,
+        @RequestParam page: Int = 1,
+    ): ResponseEntity<BookPageResponse.BookInfoPagination> {
+        val response = bookQueryService.findPageBookByGenres(size, page, genres)
 
         return ResponseEntity.ok(response)
     }

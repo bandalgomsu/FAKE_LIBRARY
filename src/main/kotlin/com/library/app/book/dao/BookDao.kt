@@ -6,7 +6,7 @@ import java.time.LocalDateTime
 
 interface BookDao {
     suspend fun getById(bookId: Long): Book?
-
+    
     suspend fun findPage(size: Int, page: Int): PageResponse<Book>
     suspend fun findPageByCreatedAtBetween(
         size: Int,

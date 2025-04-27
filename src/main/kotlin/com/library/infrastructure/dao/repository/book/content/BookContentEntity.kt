@@ -1,5 +1,6 @@
 package com.library.infrastructure.dao.repository.book.content
 
+import com.library.app.book.model.BookContent
 import com.library.infrastructure.dao.repository.BaseEntity
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Column
@@ -14,4 +15,14 @@ class BookContentEntity(
     @Column("book_id")
     var bookId: Long
 ) : BaseEntity() {
+
+    fun toModel(): BookContent {
+        return BookContent(
+            id = id,
+            content = content,
+            bookId = bookId,
+            createdAt = super.createdAt,
+            updatedAt = super.updatedAt
+        )
+    }
 }

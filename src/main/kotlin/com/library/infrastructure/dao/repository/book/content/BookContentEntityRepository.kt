@@ -14,30 +14,16 @@ class BookContentEntityRepository(
 
     override suspend fun getAllByBookId(bookId: Long): List<BookContent> {
         return bookContentRepository.findAllByBookId(bookId)
-            .map {
-                return@map BookContent(
-                    id = it.id,
-                    content = it.content,
-                    bookId = it.bookId,
-                    createdAt = it.createdAt,
-                    updatedAt = it.updatedAt
-                )
-            }.toList()
+            .map { return@map it.toModel() }
+            .toList()
     }
 
     override suspend fun findPageByBookId(bookId: Long, size: Int, page: Int): PageResponse<BookContent> {
         val offset = (page - 1) * size
         val totalElements = bookContentRepository.countByBookId(bookId)
         val bookContents = bookContentRepository.findPageByBookId(bookId, size, offset)
-            .map {
-                BookContent(
-                    id = it.id,
-                    content = it.content,
-                    bookId = it.bookId,
-                    createdAt = it.createdAt,
-                    updatedAt = it.updatedAt
-                )
-            }.toList()
+            .map { it.toModel() }
+            .toList()
 
         val totalPages = (totalElements / size) + if (totalElements % size > 0) 1 else 0
 
@@ -56,14 +42,6 @@ class BookContentEntityRepository(
                 content = bookContent.content,
                 bookId = bookContent.bookId
             )
-        ).let {
-            BookContent(
-                id = it.id,
-                content = it.content,
-                bookId = it.bookId,
-                createdAt = it.createdAt,
-                updatedAt = it.updatedAt
-            )
-        }
+        ).toModel()
     }
 }
